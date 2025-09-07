@@ -1,43 +1,63 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
+import Tabicons from "@/components/tabicons";
+import { icons } from "@/constants/icons";
+import { Tabs } from "expo-router";
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+export default function RootLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
+        tabBarStyle: {
+          backgroundColor: "#0f0d23",
+          marginHorizontal: 15,
+          borderRadius: 50,
+          height: 50,
+          marginBottom: 36,
+          overflow: "hidden",
+          borderWidth: 1,
+          borderColor: "#0f0d23",
+          position: "absolute",
+        },
+        tabBarItemStyle: {
+          justifyContent: "center",
+        },
+        tabBarShowLabel: false,
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: "Home",
+          tabBarIcon: ({ focused }) => (
+            <Tabicons focused={focused} icon={icons.home} title="Home" />
+          ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="Search"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: "Search",
+          tabBarIcon: ({ focused }) => (
+            <Tabicons focused={focused} icon={icons.search} title="Search" />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="Bookmark"
+        options={{
+          title: "Save",
+          tabBarIcon: ({ focused }) => (
+            <Tabicons focused={focused} icon={icons.save} title="Save" />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="Profile"
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ focused }) => (
+            <Tabicons focused={focused} icon={icons.person} title="Profile" />
+          ),
         }}
       />
     </Tabs>

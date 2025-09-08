@@ -1,0 +1,39 @@
+import axios from "axios";
+
+const baseURL = `https://api.themoviedb.org/3`;
+const movieEndpoint = () =>
+  `${baseURL}/discover/movie?include_adult=true&sort_by=popularity.desc`;
+
+const queryEndpoint = (params: { name: string }) =>
+  `${baseURL}/search/movie?query=${encodeURIComponent(params.name)}`;
+
+const apiCall = async (endpoint: string) => {
+  const options = {
+    method: "GET",
+    url: endpoint,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${process.env.EXPO_PUBLIC_MOVIE_API_KEY}`,
+    },
+  };
+  try {
+    const res = await axios.request(options);
+    return res.data;
+  } catch (error: any) {
+    if (error.response) {
+      console.error("Error:", error.response.status, error.response.data);
+    } else if (error.request) {
+      console.error("No response received:", error.request);
+    } else {
+      console.error("Error setting up request:", error.message);
+    }
+    throw error;
+  }
+};
+
+export const fetchMovies = () => {
+  return apiCall(movieEndpoint());
+};
+export const fetchQueryMovies = (params: { name: string }) => {
+  return apiCall(queryEndpoint(params));
+};

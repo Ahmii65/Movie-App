@@ -1,8 +1,10 @@
-import Tabicons from "@/components/tabicons";
+import Tabicons from "@/components/Tabicons";
 import { icons } from "@/constants/icons";
 import { Tabs } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function RootLayout() {
+  const { bottom } = useSafeAreaInsets();
   return (
     <Tabs
       screenOptions={{
@@ -11,8 +13,8 @@ export default function RootLayout() {
           backgroundColor: "#0f0d23",
           marginHorizontal: 15,
           borderRadius: 50,
-          height: 50,
-          marginBottom: 36,
+          height: 52,
+          marginBottom: bottom + 10,
           overflow: "hidden",
           borderWidth: 1,
           borderColor: "#0f0d23",
@@ -20,6 +22,7 @@ export default function RootLayout() {
         },
         tabBarItemStyle: {
           justifyContent: "center",
+          alignItems: "center",
         },
         tabBarShowLabel: false,
       }}

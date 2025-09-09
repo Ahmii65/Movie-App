@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const baseURL = `https://api.themoviedb.org/3`;
-const movieEndpoint = () =>
-  `${baseURL}/discover/movie?include_adult=true&sort_by=popularity.desc`;
+const movieEndpoint = (params: { page: number }) =>
+  `${baseURL}/discover/movie?include_adult=false&page=${params.page}&sort_by=popularity.desc`;
 
 const queryEndpoint = (params: { name: string }) =>
   `${baseURL}/search/movie?query=${encodeURIComponent(params.name)}`;
@@ -31,8 +31,8 @@ const apiCall = async (endpoint: string) => {
   }
 };
 
-export const fetchMovies = () => {
-  return apiCall(movieEndpoint());
+export const fetchMovies = (params: { page: number }) => {
+  return apiCall(movieEndpoint(params));
 };
 export const fetchQueryMovies = (params: { name: string }) => {
   return apiCall(queryEndpoint(params));

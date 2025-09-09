@@ -1,30 +1,24 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
-import { TextInput, View } from "react-native";
+import React from "react";
+import { Pressable, Text, View } from "react-native";
 import { heightPercentageToDP } from "react-native-responsive-screen";
 interface Props {
-  placeHolder: string;
   onPress: () => void;
 }
-const SearchBar = ({ placeHolder, onPress }: Props) => {
-  const [textInput, settextInput] = useState<string>("");
-
-  const handleQuery = (text: string) => {
-    settextInput(text);
-  };
+const SearchBar = ({ onPress }: Props) => {
   return (
-    <View className="flex-row items-center p-2 rounded-full bg-secondary" style={{marginVertical:heightPercentageToDP(2)}}>
+    <Pressable
+      className="flex-row items-center bg-secondary rounded-full"
+      style={{ marginTop: heightPercentageToDP(2.5),padding:15 }}
+      onPress={onPress}
+    >
       <View className="items-center justify-center pl-2">
-        <Ionicons name="search" size={24} color="#ab8bff" />
+        <Ionicons name="search" size={24} color="white" />
       </View>
-      <TextInput
-        placeholder={placeHolder}
-        onChangeText={(text) => handleQuery(text)}
-        onPress={onPress}
-        placeholderTextColor={"#ab8bff"}
-        className="justify-center flex-1 pl-2 color-accent"
-      />
-    </View>
+      <Text className="justify-center flex-1 pl-2 color-white">
+        Search for Movies
+      </Text>
+    </Pressable>
   );
 };
 

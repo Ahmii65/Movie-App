@@ -75,3 +75,8 @@ interface TrendingCardProps {
   movie: TrendingMovie;
   index: number;
 }
+
+interface AppContextType  {
+  loading: boolean;
+  setloading: React.Dispatch<React.SetStateAction<boolean>>;
+};

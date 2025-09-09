@@ -14,7 +14,7 @@ export default function RootLayout() {
           marginHorizontal: 15,
           borderRadius: 50,
           height: 52,
-          marginBottom: bottom + 10,
+          marginBottom: bottom,
           overflow: "hidden",
           borderWidth: 1,
           borderColor: "#0f0d23",

@@ -1,47 +1,56 @@
 import MovieCard from "@/components/MovieCard";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
-import { AppContext } from "@/context/context";
 import { fetchQueryMovies } from "@/services/api";
 import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
-import { debounce } from "lodash";
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Image, Text, TextInput, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Image, Text, TextInput, View } from "react-native";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 
 export default function Search() {
-  const { loading, setloading } = useContext(AppContext)!;
+  const [loading, setloading] = useState<boolean | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [data, setdata] = useState<Movie[]>([]);
-  const handlesearch = (text: string) => {
-    if (text.trim() === "") {
-      setdata([]);
-      return;
-    }
-    setloading(true);
-    fetchQueryMovies({ name: text }).then((data) => {
-      setdata(data.results);
-      setloading(false);
-    });
-  };
-  const handleDebounce = useCallback(debounce(handlesearch, 150), []);
+  const [input, setInput] = useState<string>("");
+
   useEffect(() => {
-    return () => handleDebounce.cancel();
-  }, [handleDebounce]);
+    const timeoutId = setTimeout(() => {
+      if (input.trim()) {
+        setloading(true);
+        setdata([]);
+        setError(null);
+        fetchQueryMovies({ name: input })
+          .then((data) => {
+            setdata(data.results);
+          })
+          .catch((err) => {
+            setError(err.message);
+          })
+          .finally(() => setloading(false));
+      } else {
+        setdata([]);
+        setError(null);
+        setloading(false);
+      }
+    }, 200);
+    return () => clearTimeout(timeoutId);
+  }, [input]);
+
   return (
     <View className="flex-1 bg-primary">
       <Image
         source={images.bg}
         className=" z-0 absolute"
-        style={{ width: wp(100) }}
+        style={{ width: wp(100), height: hp(100) }}
+        resizeMode="cover"
       />
       <FlashList<Movie>
         className="flex-1 px-3"
         data={data}
-        estimatedItemSize={243}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={{ paddingBottom: hp(8) }}
         showsVerticalScrollIndicator={false}
@@ -62,19 +71,39 @@ export default function Search() {
               <TextInput
                 placeholder="Search for Movies"
                 placeholderTextColor={"white"}
-                onChangeText={(text) => handleDebounce(text)}
-                className="justify-center flex-1 pl-2 color-white"
+                onChangeText={(text) => setInput(text)}
+                value={input}
+                className="justify-center flex-1 pl-2 text-white"
               />
             </View>
+            {loading && <ActivityIndicator color="white" size={30} />}
+
+            {error && (
+              <Text className="text-red-500 text-center my-3 font-medium text-2xl">
+                {error}
+              </Text>
+            )}
             {data.length > 0 && (
               <Text
                 className="text-white text-2xl font-medium"
                 style={{ marginVertical: hp(1.5) }}
               >
-                Matched Results
+                Matched Results for{" "}
+                <Text className="text-purple-500 text-2xl font-medium">
+                  {input}
+                </Text>
               </Text>
             )}
           </View>
+        }
+        ListEmptyComponent={
+          !loading && !error ? (
+            <View className="px-5" style={{ marginTop: hp(5) }}>
+              <Text className="text-white text-center font-medium text-2xl">
+                {input.trim() ? "No Result Found" : "Search For a Movie"}
+              </Text>
+            </View>
+          ) : null
         }
       />
     </View>

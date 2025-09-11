@@ -20,10 +20,13 @@ const apiCall = async (endpoint: string) => {
     const res = await axios.request(options);
     return res.data;
   } catch (error: any) {
+    let errorMessage = "An unexpected error occurred.";
     if (error.response) {
       console.error("Error:", error.response.status, error.response.data);
+      errorMessage = "Something went wrong. Please try again later.";
     } else if (error.request) {
       console.error("No response received:", error.request);
+      errorMessage = "Unable to reach server. Check your internet.";
     } else {
       console.error("Error setting up request:", error.message);
     }

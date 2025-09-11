@@ -2,12 +2,11 @@ import MovieCard from "@/components/MovieCard";
 import SearchBar from "@/components/SearchBar";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
-import { AppContext } from "@/context/context";
 import { fetchMovies } from "@/services/api";
 import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Image, Text, View } from "react-native";
 import {
   heightPercentageToDP as hp,
@@ -15,16 +14,21 @@ import {
 } from "react-native-responsive-screen";
 
 export default function Home() {
-  const { loading, setloading } = useContext(AppContext)!;
+  const [loading, setloading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [data, setdata] = useState<Movie[]>([]);
   const [pagee, setpage] = useState<number>(1);
   const router = useRouter();
   useEffect(() => {
     setloading(true);
-    fetchMovies({ page: 1 }).then((data) => {
-      setdata(data.results);
-      setloading(false);
-    });
+    fetchMovies({ page: 1 })
+      .then((data) => {
+        setdata(data.results);
+      })
+      .catch((err) => {
+        setError(err.message);
+      })
+      .finally(() => setloading(false));
   }, []);
 
   const loadMore = () => {
@@ -48,7 +52,8 @@ export default function Home() {
       <Image
         source={images.bg}
         className=" z-0 absolute"
-        style={{ width: wp(100) }}
+        style={{ width: wp(100), height: hp(100) }}
+        resizeMode="cover"
       />
       {loading ? (
         <ActivityIndicator
@@ -56,6 +61,10 @@ export default function Home() {
           color="white"
           className="items-center justify-center flex-1"
         />
+      ) : error ? (
+        <View className="flex-1 items-center justify-center">
+          <Text className="text-white font-medium text-2xl">{error}</Text>
+        </View>
       ) : (
         <FlashList<Movie>
           className="flex-1 px-3 "
@@ -80,7 +89,6 @@ export default function Home() {
           ListFooterComponent={<ActivityIndicator color="white" size={30} />}
           renderItem={({ item }) => <MovieCard {...item} />}
           onEndReached={loadMore}
-          estimatedItemSize={243}
           onEndReachedThreshold={0.1}
           numColumns={3}
         />

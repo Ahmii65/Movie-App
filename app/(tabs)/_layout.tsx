@@ -11,7 +11,7 @@ export default function RootLayout() {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: "#0f0d23",
-          marginHorizontal: 10,
+          marginHorizontal: 17,
           borderRadius: 50,
           height: 52,
           marginBottom: bottom,

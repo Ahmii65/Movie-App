@@ -2,6 +2,7 @@ import MovieCard from "@/components/MovieCard";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { fetchQueryMovies } from "@/services/api";
+import { updateSearchCount } from "@/services/appwrite";
 import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import React, { useEffect, useState } from "react";
@@ -15,6 +16,7 @@ export default function Search() {
   const [loading, setloading] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [data, setdata] = useState<Movie[]>([]);
+
   const [input, setInput] = useState<string>("");
 
   useEffect(() => {
@@ -36,9 +38,17 @@ export default function Search() {
         setError(null);
         setloading(false);
       }
-    }, 200);
+    }, 500);
     return () => clearTimeout(timeoutId);
   }, [input]);
+
+  useEffect(() => {
+    const dbhandler = async () => {
+      if (data.length > 0 && input.trim())
+        await updateSearchCount(input, data[0]);
+    };
+    dbhandler();
+  }, [data]);
 
   return (
     <View className="flex-1 bg-primary">
@@ -62,7 +72,7 @@ export default function Search() {
               <Image source={icons.logo} className="w-12 h-10" />
             </View>
             <View
-              className="flex-row items-center p-[7.5px] bg-secondary rounded-full"
+              className="flex-row items-center p-[7.5px] bg-dark-200 rounded-full"
               style={{ marginTop: hp(2.5) }}
             >
               <View className="items-center justify-center pl-4">
@@ -76,7 +86,9 @@ export default function Search() {
                 className="justify-center flex-1 pl-2 text-white"
               />
             </View>
-            {loading && <ActivityIndicator color="white" size={30} />}
+            {loading && (
+              <ActivityIndicator color="white" size={30} className="my-1" />
+            )}
 
             {error && (
               <Text className="text-red-500 text-center my-3 font-medium text-2xl">

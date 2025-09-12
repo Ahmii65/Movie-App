@@ -8,7 +8,7 @@ interface Props {
 const SearchBar = ({ onPress }: Props) => {
   return (
     <Pressable
-      className="flex-row items-center bg-secondary rounded-full"
+      className="flex-row items-center bg-dark-200 rounded-full"
       style={{ marginTop: heightPercentageToDP(2.5),padding:15 }}
       onPress={onPress}
     >

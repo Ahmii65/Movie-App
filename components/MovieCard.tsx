@@ -1,28 +1,23 @@
 import { icons } from "@/constants/icons";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
-import { heightPercentageToDP as hp, widthPercentageToDP } from "react-native-responsive-screen";
+import { Image, Pressable, Text, View } from "react-native";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 const MovieCard = ({
   title,
-  id,
+  id: movie_id,
   poster_path,
   vote_average,
   release_date,
 }: Movie) => {
   const router = useRouter();
   return (
-    <View style={{
-        width: widthPercentageToDP(28),
-        marginRight: 20, 
-        marginBottom: 10, 
-      }}>
-    <TouchableOpacity
+    <Pressable
       onPress={() => {
-        router.push("/MovieDetails");
+        router.push({ pathname: "/MovieDetails", params: { movie_id } });
       }}
-      activeOpacity={0.8}
+      style={{ padding: 5, paddingBottom: hp(1) }}
     >
       <Image
         source={{
@@ -42,10 +37,14 @@ const MovieCard = ({
       </Text>
       <View className="flex-row gap-2 items-center justify-space-between">
         <Image source={icons.star} className="w-4 h-4" />
-        <Text className="text-white" style={{ fontSize: hp(1.6) }}>{Math.round(vote_average)}</Text>
+        <Text className="text-white" style={{ fontSize: hp(1.6) }}>
+          {Math.round(vote_average)}
+        </Text>
       </View>
-      <Text className="text-white" style={{ fontSize: hp(1.6) }}>{release_date?.split("-")[0]}</Text>
-    </TouchableOpacity></View>
+      <Text className="text-white" style={{ fontSize: hp(1.6) }}>
+        {release_date?.split("-")[0]}
+      </Text>
+    </Pressable>
   );
 };
 

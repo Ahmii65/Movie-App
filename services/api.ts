@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const API_KEY = process.env.EXPO_PUBLIC_MOVIE_API_KEY;
+
 const baseURL = `https://api.themoviedb.org/3`;
 const movieEndpoint = (params: { page: number }) =>
   `${baseURL}/discover/movie?include_adult=false&page=${params.page}&sort_by=popularity.desc`;
@@ -13,7 +15,7 @@ const apiCall = async (endpoint: string) => {
     url: endpoint,
     headers: {
       accept: "application/json",
-      Authorization: `Bearer ${process.env.EXPO_PUBLIC_MOVIE_API_KEY}`,
+      Authorization: `Bearer ${API_KEY}`,
     },
   };
   try {
@@ -39,4 +41,26 @@ export const fetchMovies = (params: { page: number }) => {
 };
 export const fetchQueryMovies = (params: { name: string }) => {
   return apiCall(queryEndpoint(params));
+};
+
+export const fetcMovieDetails = async (
+  movieID: string
+): Promise<MovieDetails> => {
+  try {
+    const res = await axios.request({
+      url: `${baseURL}/movie/${movieID}`,
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${API_KEY}`,
+      },
+    });
+    return res.data;
+  } catch (err: any) {
+    console.error(
+      "An Error Occured",
+      err?.response?.data || err.message || err
+    );
+    throw err;
+  }
 };

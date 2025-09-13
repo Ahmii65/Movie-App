@@ -7,10 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Image, Text, TextInput, View } from "react-native";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 export default function Search() {
   const [loading, setloading] = useState<boolean | null>(null);
@@ -52,12 +49,7 @@ export default function Search() {
 
   return (
     <View className="flex-1 bg-primary">
-      <Image
-        source={images.bg}
-        className=" z-0 absolute"
-        style={{ width: wp(100), height: hp(100) }}
-        resizeMode="cover"
-      />
+      <Image source={images.bg} className=" z-0 absolute" resizeMode="cover" />
       <FlashList<Movie>
         className="flex-1 px-3"
         data={data}

@@ -9,10 +9,7 @@ import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Image, Text, View } from "react-native";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 export default function Home() {
   const [loading, setloading] = useState<boolean>(true);
@@ -28,6 +25,7 @@ export default function Home() {
     fetchMovies({ page: 1 })
       .then((data) => {
         setdata(data.results);
+        setError(null);
       })
       .catch((err) => {
         setError(err.message);
@@ -58,7 +56,6 @@ export default function Home() {
   const loadMore = () => {
     const nextPage = pagee + 1;
     setpage(nextPage);
-
     fetchMovies({ page: nextPage }).then((res) => {
       setdata((prev) => {
         const combined = [...prev, ...res.results];
@@ -72,12 +69,7 @@ export default function Home() {
   };
   return (
     <View className="flex-1 bg-primary">
-      <Image
-        source={images.bg}
-        className=" z-0 absolute"
-        style={{ width: wp(100), height: hp(100) }}
-        resizeMode="cover"
-      />
+      <Image source={images.bg} className=" z-0 absolute" resizeMode="cover" />
       {loading || trendingLoading ? (
         <ActivityIndicator
           size="large"

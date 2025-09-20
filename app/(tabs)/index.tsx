@@ -7,7 +7,7 @@ import { fetchMovies } from "@/services/api";
 import { getResults } from "@/services/appwrite";
 import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Image, Text, View } from "react-native";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
@@ -18,7 +18,7 @@ export default function Home() {
   const [trendingError, setTrendingError] = useState<string | null>(null);
   const [trending, setTrending] = useState<TrendingMovie[]>([]);
   const [data, setdata] = useState<Movie[]>([]);
-  const [pagee, setpage] = useState<number>(1);
+  const pageRef = useRef<number>(1);
   const router = useRouter();
   useEffect(() => {
     setloading(true);
@@ -54,9 +54,8 @@ export default function Home() {
   }, []);
 
   const loadMore = () => {
-    const nextPage = pagee + 1;
-    setpage(nextPage);
-    fetchMovies({ page: nextPage }).then((res) => {
+    pageRef.current += 1;
+    fetchMovies({ page: pageRef.current }).then((res) => {
       setdata((prev) => {
         const combined = [...prev, ...res.results];
         const unique = combined.filter(

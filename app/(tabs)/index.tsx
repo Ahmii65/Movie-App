@@ -12,12 +12,13 @@ import { ActivityIndicator, Image, Text, View } from "react-native";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 export default function Home() {
-  const [loading, setloading] = useState<boolean>(true);
+  const [loading, setloading] = useState<boolean>(false);
   const [trendingLoading, setTrendingloading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [trendingError, setTrendingError] = useState<string | null>(null);
   const [trending, setTrending] = useState<TrendingMovie[]>([]);
   const [data, setdata] = useState<Movie[]>([]);
+  const [footerLoading, setfooterLoading] = useState<boolean>(false);
   const pageRef = useRef<number>(1);
   const router = useRouter();
   useEffect(() => {
@@ -55,20 +56,27 @@ export default function Home() {
 
   const loadMore = () => {
     pageRef.current += 1;
-    fetchMovies({ page: pageRef.current }).then((res) => {
-      setdata((prev) => {
-        const combined = [...prev, ...res.results];
-        const unique = combined.filter(
-          (movie, index, arr) =>
-            arr.findIndex((m) => m.id === movie.id) === index
-        );
-        return unique;
-      });
-    });
+    setfooterLoading(true);
+    fetchMovies({ page: pageRef.current })
+      .then((res) => {
+        setdata((prev) => {
+          const combined = [...prev, ...res.results];
+          const unique = combined.filter(
+            (movie, index, arr) =>
+              arr.findIndex((m) => m.id === movie.id) === index
+          );
+          return unique;
+        });
+      })
+      .finally(() => setfooterLoading(false));
   };
   return (
     <View className="flex-1 bg-primary">
-      <Image source={images.bg} className=" z-0 absolute" resizeMode="cover" />
+      <Image
+        source={images.bg}
+        className=" z-0 absolute w-full h-full"
+        resizeMode="cover"
+      />
       {loading || trendingLoading ? (
         <ActivityIndicator
           size="large"
@@ -87,7 +95,7 @@ export default function Home() {
           data={data}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={{
-            paddingBottom: hp(9),
+            paddingBottom: hp(10),
           }}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={
@@ -124,7 +132,9 @@ export default function Home() {
               </Text>
             </View>
           }
-          ListFooterComponent={<ActivityIndicator color="white" size={30} />}
+          ListFooterComponent={
+            footerLoading ? <ActivityIndicator color="white" size={30} /> : null
+          }
           renderItem={({ item }) => <MovieCard {...item} />}
           onEndReached={loadMore}
           onEndReachedThreshold={0.1}

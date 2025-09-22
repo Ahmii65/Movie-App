@@ -38,7 +38,7 @@ const MovieCard = ({
       <View className="flex-row gap-2 items-center justify-space-between">
         <Image source={icons.star} className="w-4 h-4" />
         <Text className="text-white" style={{ fontSize: hp(1.6) }}>
-          {Math.round(vote_average)}
+          {`${vote_average.toFixed(1)}`}
         </Text>
       </View>
       <Text className="text-white" style={{ fontSize: hp(1.6) }}>

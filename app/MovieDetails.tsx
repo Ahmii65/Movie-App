@@ -1,35 +1,33 @@
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { fetcMovieDetails } from "@/services/api";
-import { useLocalSearchParams } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 interface infoProps {
   lable: string;
   value?: string | number | null;
 }
-
-const MovieInfo = ({ lable, value }: infoProps) => (
-  <View className="items-start justify-center mt-5">
-    <Text className="text-white" style={{ fontSize: hp(2) }}>
-      {lable}
-    </Text>
-    <Text
-      className="text-white mt-2"
-      style={{ fontSize: hp(1.6), letterSpacing: 0.4 }}
-    >
-      {value || "N/A"}
-    </Text>
-  </View>
-);
 const MovieDetails = () => {
   const { movie_id } = useLocalSearchParams<{ movie_id: string }>();
   const [details, setdetails] = useState<MovieDetails | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { bottom } = useSafeAreaInsets();
+  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
     const fetchDetails = async () => {
@@ -60,13 +58,12 @@ const MovieDetails = () => {
     <View className="flex-1 bg-primary">
       <Image
         source={images.bg}
-        className="absolute z-0"
+        className="absolute z-0 w-full h-full"
         resizeMode="cover"
-        style={{ width: wp(100), height: hp(100) }}
       />
       {loading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size={24} color={"white"} />
+          <ActivityIndicator size="large" color={"white"} />
         </View>
       ) : error ? (
         <View className="items-center justify-center flex-1">
@@ -74,7 +71,7 @@ const MovieDetails = () => {
         </View>
       ) : (
         <View className="flex-1 ">
-          <ScrollView contentContainerStyle={{ paddingBottom: hp(8) }}>
+          <ScrollView contentContainerStyle={{ paddingBottom: hp(13) }}>
             <View>
               <Image
                 source={{
@@ -117,16 +114,65 @@ const MovieDetails = () => {
                 </Text>
               </View>
               <MovieInfo lable="Overview" value={details?.overview} />
+              <MovieInfo lable="Tagline" value={details?.tagline} />
               <MovieInfo
                 lable="Genres"
                 value={details?.genres.map((g) => g.name).join(" - ") || "N/A"}
               />
+              <View className="flex-row gap-12">
+                {details?.budget ? (
+                  <MovieInfo
+                    lable="Budget"
+                    value={`$${details?.budget / 1_000_000} Million`}
+                  />
+                ) : null}
+                {details?.revenue ? (
+                  <MovieInfo
+                    lable="Revenue"
+                    value={`$${details?.revenue / 1_000_000} Million`}
+                  />
+                ) : null}
+              </View>
+              <MovieInfo
+                lable="Production Companies"
+                value={
+                  details?.production_companies
+                    ?.map((p) => p.name)
+                    .join(" - ") || "N/A"
+                }
+              />
             </View>
           </ScrollView>
+          <View
+            className="absolute bottom-0 left-0 right-0 px-5"
+            style={{ marginBottom: bottom }}
+          >
+            <TouchableOpacity
+              className="flex-row z-50 bg-accent items-center justify-center py-4 rounded-lg gap-1 min-h-[50px]"
+              onPress={() => router.back()}
+            >
+              <Ionicons name="arrow-back" color={"white"} />
+              <Text className="text-white">Go Back</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
     </View>
   );
 };
+
+const MovieInfo = ({ lable, value }: infoProps) => (
+  <View className="items-start justify-center mt-5">
+    <Text className="text-white" style={{ fontSize: hp(2) }}>
+      {lable}
+    </Text>
+    <Text
+      className="text-white mt-2"
+      style={{ fontSize: hp(1.6), letterSpacing: 0.4 }}
+    >
+      {value || "N/A"}
+    </Text>
+  </View>
+);
 
 export default MovieDetails;

@@ -1,14 +1,17 @@
 import { images } from "@/constants/images";
 import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { Image, View } from "react-native";
+import { ImageBackground } from "react-native";
+import { enableScreens } from "react-native-screens";
 import "./global.css";
+enableScreens(true);
 
 export default function RootLayout() {
   return (
-    <View className="flex-1 bg-primary">
-      <Image source={images.bg} className="absolute z-0" resizeMode="cover" />
-      <StatusBar hidden />
+    <ImageBackground
+      className="flex-1 bg-primary"
+      source={images.bg}
+      resizeMode="cover"
+    >
       <Stack
         screenOptions={{
           headerShown: false,
@@ -18,6 +21,6 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="MovieDetails" />
       </Stack>
-    </View>
+    </ImageBackground>
   );
 }

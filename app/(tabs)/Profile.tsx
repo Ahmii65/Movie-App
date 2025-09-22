@@ -1,10 +1,11 @@
+import { images } from "@/constants/images";
 import React from "react";
-import { Text, View } from "react-native";
+import { Image, View } from "react-native";
 
 export default function Profile() {
   return (
-    <View>
-      <Text>Profile</Text>
+    <View className="bg-primary">
+      <Image source={images.bg} resizeMode="cover" className="w-full h-full" />
     </View>
   );
 }

@@ -49,7 +49,11 @@ export default function Search() {
 
   return (
     <View className="flex-1 bg-primary">
-      <Image source={images.bg} className=" z-0 absolute" resizeMode="cover" />
+      <Image
+        source={images.bg}
+        className=" z-0 absolute w-full h-full"
+        resizeMode="cover"
+      />
       <FlashList<Movie>
         className="flex-1 px-3"
         data={data}
